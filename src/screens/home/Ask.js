@@ -1,7 +1,13 @@
 import React from 'react';
 import { View, Text } from 'react-native';
+import { connect } from 'react-redux';
+import { getAskStories } from '../../redux/stories';
 
-export default class extends React.Component {
+class Ask extends React.Component {
+  componentDidMount() {
+    this.props.getAskStories();
+  }
+
   shouldComponentUpdate() {
     return false;
   }
@@ -15,3 +21,8 @@ export default class extends React.Component {
     );
   }
 }
+
+export default connect(
+  null,
+  { getAskStories }
+)(Ask);

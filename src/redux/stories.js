@@ -2,22 +2,90 @@ import createReducer from '../utils/createReducer';
 
 const initialState = {
   byId: {},
-  allIds: []
+  allIds: [],
+  top: [],
+  new: [],
+  best: [],
+  ask: [],
+  show: []
 };
 
-const RESOURCE = 'STORY';
+const RESOURCE = '[STORY]';
 
-const ADD = 'ADD_' + RESOURCE;
-const UPDATE = 'UPDATE_' + RESOURCE;
+const SET = 'SET ' + RESOURCE;
+
+export const GET_TOP = 'GET_TOP ' + RESOURCE;
+export const GET_NEW = 'GET_NEW ' + RESOURCE;
+export const GET_BEST = 'GET_BEST ' + RESOURCE;
+export const GET_ASK = 'GET_ASK ' + RESOURCE;
+export const GET_SHOW = 'GET_SHOW ' + RESOURCE;
+
+export const SET_TOP = 'SET_TOP ' + RESOURCE;
+export const SET_NEW = 'SET_NEW ' + RESOURCE;
+export const SET_BEST = 'SET_BEST ' + RESOURCE;
+export const SET_ASK = 'SET_ASK ' + RESOURCE;
+export const SET_SHOW = 'SET_SHOW ' + RESOURCE;
 
 export default createReducer(initialState, {
-  [ADD](state, { payload }) {
-    return state;
+  [SET](state, { payload }) {
+    const { id, ...data } = payload;
+
+    const allIds = [...state.allIds];
+    // check if we need to add to array
+    if (!state.byId[id]) {
+      allIds.push(id);
+    }
+
+    return {
+      byIds: {
+        ...state.byId,
+        [id]: data
+      },
+      allIds
+    };
   },
-  [UPDATE](state, { payload }) {
-    return state;
+  [SET_TOP](state, { payload }) {
+    return {
+      ...state,
+      top: payload
+    };
+  },
+  [SET_NEW](state, { payload }) {
+    return {
+      ...state,
+      new: payload
+    };
+  },
+  [SET_BEST](state, { payload }) {
+    return {
+      ...state,
+      best: payload
+    };
+  },
+  [SET_ASK](state, { payload }) {
+    return {
+      ...state,
+      ask: payload
+    };
+  },
+  [SET_SHOW](state, { payload }) {
+    return {
+      ...state,
+      show: payload
+    };
   }
 });
 
-export const addStory = payload => ({ type: ADD, payload });
-export const updateStory = payload => ({ type: UPDATE, payload });
+export const setStory = payload => ({ type: SET, payload });
+
+export const getTopStories = () => ({ type: GET_TOP });
+export const getNewStories = () => ({ type: GET_NEW });
+export const getBestStories = () => ({ type: GET_BEST });
+export const getAskStories = () => ({ type: GET_ASK });
+export const getShowStories = () => ({ type: GET_SHOW });
+
+export const setTopStories = payload => ({ type: SET_TOP, payload });
+export const setNewStories = payload => ({ type: SET_NEW, payload });
+export const setBestStories = payload => ({ type: SET_BEST, payload });
+export const setAskStories = payload => ({ type: SET_ASK, payload });
+export const setShowStories = payload => ({ type: SET_SHOW, payload });

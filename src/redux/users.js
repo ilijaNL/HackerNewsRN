@@ -5,19 +5,28 @@ const initialState = {
   allIds: []
 };
 
-const RESOURCE = 'USER';
+const RESOURCE = '[USER]';
 
-const ADD = 'ADD_' + RESOURCE;
-const UPDATE = 'UPDATE_' + RESOURCE;
+const SET = 'SET ' + RESOURCE;
 
 export default createReducer(initialState, {
-  [ADD](state, { payload }) {
-    return state;
-  },
-  [UPDATE](state, { payload }) {
-    return state;
+  [SET](state, { payload }) {
+    const { id, ...data } = payload;
+
+    const allIds = [...state.allIds];
+    // check if we need to add to array
+    if (!state.byId[id]) {
+      allIds.push(id);
+    }
+
+    return {
+      byIds: {
+        ...state.byId,
+        [id]: data
+      },
+      allIds
+    };
   }
 });
 
-export const addUser = payload => ({ type: ADD, payload });
-export const updateUser = payload => ({ type: UPDATE, payload });
+export const setUser = payload => ({ type: SET, payload });
