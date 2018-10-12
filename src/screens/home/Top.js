@@ -1,17 +1,27 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
+import { connect } from 'react-redux';
+import { getTopStories } from '../../redux/stories';
+import StoryList from '../../components/StoryList';
 
-export default class extends React.Component {
+const List = connect(state => ({
+  data: state.stories.top
+}))(StoryList);
+
+class Top extends React.Component {
+  componentDidMount() {
+    this.props.getTopStories();
+  }
   shouldComponentUpdate() {
     return false;
   }
 
   render() {
-    return (
-      <View>
-        {console.log('render top')}
-        <Text>top</Text>
-      </View>
-    );
+    return <List />;
   }
 }
+
+export default connect(
+  null,
+  { getTopStories }
+)(Top);

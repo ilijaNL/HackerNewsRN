@@ -1,4 +1,5 @@
 import createReducer from '../utils/createReducer';
+import { setItem } from './items';
 
 const initialState = {
   byId: {},
@@ -11,21 +12,7 @@ const SET = 'SET ' + RESOURCE;
 
 export default createReducer(initialState, {
   [SET](state, { payload }) {
-    const { id, ...data } = payload;
-
-    const allIds = [...state.allIds];
-    // check if we need to add to array
-    if (!state.byId[id]) {
-      allIds.push(id);
-    }
-
-    return {
-      byIds: {
-        ...state.byId,
-        [id]: data
-      },
-      allIds
-    };
+    setItem(state, payload);
   }
 });
 

@@ -2,4 +2,13 @@ export const GET_ITEM = 'GET_ITEM';
 
 export const fetchItem = id => ({ type: GET_ITEM, id });
 
-// no reducer
+// helper reducer
+export const setItem = (state, payload) => {
+  const { id, ...data } = payload;
+
+  // check if we need to add to array
+  if (!state.byId[id]) {
+    state.allIds.push(id);
+  }
+  state.byId[id] = data;
+};
