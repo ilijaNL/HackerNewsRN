@@ -4,7 +4,8 @@ import { getNewStories } from '../../redux/stories';
 import StoryList from '../../components/StoryList';
 
 const List = connect(state => ({
-  data: state.stories.new
+  data: state.stories.new,
+  loading: state.stories.loading.new
 }))(StoryList);
 
 class New extends React.Component {

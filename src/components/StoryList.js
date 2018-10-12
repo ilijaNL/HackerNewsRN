@@ -29,12 +29,12 @@ export default class extends React.PureComponent {
   };
 
   render() {
-    const { renderItem, pullToRefresh } = this.props;
+    const { renderItem, pullToRefresh, loading } = this.props;
     const { data } = this.state;
 
     return (
       <FlatList
-        refreshing={false}
+        refreshing={loading}
         data={data}
         onRefresh={pullToRefresh}
         renderItem={renderItem || this._renderItem}

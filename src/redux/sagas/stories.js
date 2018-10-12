@@ -10,24 +10,58 @@ import {
   setBestStories,
   setNewStories,
   setShowStories,
-  setTopStories
+  setTopStories,
+  setLoadingStories
 } from '../stories';
 
-function* getStories(actionCreator, promise) {
+function* getStories(actionCreator, promise, list) {
   try {
+    yield put(setLoadingStories({ value: true, list }));
     const result = yield call(promise);
     yield put(actionCreator(result));
   } catch (err) {
     console.log(err);
+  } finally {
+    yield put(setLoadingStories({ value: false, list }));
   }
 }
 
 export function* watchStories() {
   yield all([
-    yield takeLatest(GET_ASK, getStories, setAskStories, API.getAskStories),
-    yield takeLatest(GET_SHOW, getStories, setShowStories, API.getShowStories),
-    yield takeLatest(GET_BEST, getStories, setBestStories, API.getBestStories),
-    yield takeLatest(GET_TOP, getStories, setTopStories, API.getTopStories),
-    yield takeLatest(GET_NEW, getStories, setNewStories, API.getNewStories)
+    yield takeLatest(
+      GET_ASK,
+      getStories,
+      setAskStories,
+      API.getAskStories,
+      'ask'
+    ),
+    yield takeLatest(
+      GET_SHOW,
+      getStories,
+      setShowStories,
+      API.getShowStories,
+      'show'
+    ),
+    yield takeLatest(
+      GET_BEST,
+      getStories,
+      setBestStories,
+      API.getBestStories,
+      'best'
+    ),
+    yield takeLatest(
+      GET_TOP,
+      getStories,
+      setTopStories,
+      API.getTopStories,
+      'top'
+    ),
+    yield takeLatest(
+      GET_NEW,
+      getStories,
+      setNewStories,
+      API.getNewStories,
+      'new'
+    )
   ]);
 }

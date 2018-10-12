@@ -4,7 +4,8 @@ import { getTopStories } from '../../redux/stories';
 import StoryList from '../../components/StoryList';
 
 const List = connect(state => ({
-  data: state.stories.top
+  data: state.stories.top,
+  loading: state.stories.loading.top
 }))(StoryList);
 
 class Top extends React.Component {

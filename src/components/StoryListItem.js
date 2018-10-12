@@ -2,6 +2,9 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { connect } from 'react-redux';
 import * as Animatable from 'react-native-animatable';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 import { fetchItem } from '../redux/items';
 
@@ -34,7 +37,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const createDummyItem = () => (
+const DummyItem = () => (
   <Animatable.View
     animation="fadeIn"
     easing="ease-out"
@@ -48,12 +51,13 @@ const createDummyItem = () => (
   </Animatable.View>
 );
 
-const createDataItem = item => [
+const DataItem = ({ item }) => [
   <Text key="title" numberOfLines={2} style={styles.title}>
     {item.title.trim()}
   </Text>,
   <Text key="subText" numberOfLines={1} style={styles.subText}>
-    {item.score} points by {item.by} | {item.descendants} comments
+    {item.score} points by {item.by} {dayjs(item.time * 1000).fromNow()} |{' '}
+    {item.descendants} comments
   </Text>
 ];
 
@@ -74,7 +78,7 @@ class StoryListItem extends React.Component {
     const { item } = this.props;
     return (
       <View style={styles.container}>
-        {item ? createDataItem(item) : createDummyItem()}
+        {item ? <DataItem item={item} /> : <DummyItem />}
       </View>
     );
   }

@@ -4,7 +4,8 @@ import { getAskStories } from '../../redux/stories';
 import StoryList from '../../components/StoryList';
 
 const List = connect(state => ({
-  data: state.stories.ask
+  data: state.stories.ask,
+  loading: state.stories.loading.ask
 }))(StoryList);
 
 class Ask extends React.Component {

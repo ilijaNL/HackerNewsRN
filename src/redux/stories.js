@@ -4,6 +4,13 @@ import { setItem } from './items';
 const initialState = {
   byId: {},
   allIds: [],
+  loading: {
+    top: false,
+    new: false,
+    best: false,
+    ask: false,
+    show: false
+  },
   top: [],
   new: [],
   best: [],
@@ -27,6 +34,8 @@ export const SET_BEST = 'SET_BEST ' + RESOURCE;
 export const SET_ASK = 'SET_ASK ' + RESOURCE;
 export const SET_SHOW = 'SET_SHOW ' + RESOURCE;
 
+export const SET_LOADING = 'SET_LOADING ' + RESOURCE;
+
 export default createReducer(initialState, {
   [SET](state, { payload }) {
     setItem(state, payload);
@@ -45,6 +54,10 @@ export default createReducer(initialState, {
   },
   [SET_SHOW](state, { payload }) {
     state.show = payload;
+  },
+  [SET_LOADING](state, { payload }) {
+    const { list, value } = payload;
+    state.loading[list] = value;
   }
 });
 
@@ -61,3 +74,5 @@ export const setNewStories = payload => ({ type: SET_NEW, payload });
 export const setBestStories = payload => ({ type: SET_BEST, payload });
 export const setAskStories = payload => ({ type: SET_ASK, payload });
 export const setShowStories = payload => ({ type: SET_SHOW, payload });
+
+export const setLoadingStories = payload => ({ type: SET_LOADING, payload });

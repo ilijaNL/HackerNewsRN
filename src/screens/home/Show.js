@@ -4,7 +4,8 @@ import { getShowStories } from '../../redux/stories';
 import StoryList from '../../components/StoryList';
 
 const List = connect(state => ({
-  data: state.stories.show
+  data: state.stories.show,
+  loading: state.stories.loading.show
 }))(StoryList);
 
 class Show extends React.Component {
