@@ -12,11 +12,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'white'
   },
   labelStyle: {
-    color: '#4c4c4c'
+    color: '#ff6600'
   },
   indicatorStyle: {
     height: StyleSheet.hairlineWidth * 10,
-    backgroundColor: '#4c4c4c'
+    backgroundColor: '#ff6600'
   }
 });
 
