@@ -56,6 +56,7 @@ export default class extends React.Component {
       pressColor="#d6d6d6"
       labelStyle={styles.labelStyle}
       indicatorStyle={styles.indicatorStyle}
+      useNativeDriver
     />
   );
 

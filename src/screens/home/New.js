@@ -1,17 +1,26 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { connect } from 'react-redux';
+import { getNewStories } from '../../redux/stories';
+import StoryList from '../../components/StoryList';
 
-export default class extends React.Component {
+const List = connect(state => ({
+  data: state.stories.new
+}))(StoryList);
+
+class New extends React.Component {
+  componentDidMount() {
+    this.props.getNewStories();
+  }
   shouldComponentUpdate() {
     return false;
   }
 
   render() {
-    return (
-      <View>
-        {console.log('render new')}
-        <Text>New</Text>
-      </View>
-    );
+    return <List pullToRefresh={this.props.getNewStories} />;
   }
 }
+
+export default connect(
+  null,
+  { getNewStories }
+)(New);

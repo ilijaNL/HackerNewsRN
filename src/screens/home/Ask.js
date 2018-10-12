@@ -1,24 +1,22 @@
 import React from 'react';
-import { View, Text } from 'react-native';
 import { connect } from 'react-redux';
 import { getAskStories } from '../../redux/stories';
+import StoryList from '../../components/StoryList';
+
+const List = connect(state => ({
+  data: state.stories.ask
+}))(StoryList);
 
 class Ask extends React.Component {
   componentDidMount() {
     this.props.getAskStories();
   }
-
   shouldComponentUpdate() {
     return false;
   }
 
   render() {
-    return (
-      <View>
-        {console.log('render ask')}
-        <Text>Ask</Text>
-      </View>
-    );
+    return <List pullToRefresh={this.props.getAskStories} />;
   }
 }
 

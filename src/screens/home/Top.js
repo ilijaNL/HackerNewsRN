@@ -1,5 +1,4 @@
 import React from 'react';
-import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { getTopStories } from '../../redux/stories';
 import StoryList from '../../components/StoryList';
@@ -17,7 +16,7 @@ class Top extends React.Component {
   }
 
   render() {
-    return <List />;
+    return <List pullToRefresh={this.props.getTopStories} />;
   }
 }
 
