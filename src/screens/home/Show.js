@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View } from 'react-native';
 import { getShowStories } from '../../redux/stories';
 import StoryList from '../../components/StoryList';
 
@@ -18,11 +17,7 @@ class Show extends React.Component {
   }
 
   render() {
-    return (
-      <View style={{ backgroundColor: '#f6f6ef' }}>
-        <List pullToRefresh={this.props.getShowStories} />
-      </View>
-    );
+    return <List pullToRefresh={this.props.getShowStories} />;
   }
 }
 

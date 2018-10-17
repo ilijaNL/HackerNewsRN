@@ -9,12 +9,15 @@ import {
 import { connect } from 'react-redux';
 import * as Animatable from 'react-native-animatable';
 import dayjs from 'dayjs';
+import { pure } from 'recompose';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-dayjs.extend(relativeTime);
-
 import { fetchItem } from '../redux/items';
+import Navigator from '../utils/ComponentNavigator';
+import StoryScreen from '../screens/Story';
+
+dayjs.extend(relativeTime);
 
 const styles = StyleSheet.create({
   container: {
@@ -79,8 +82,8 @@ const DummyItem = () => (
   </Animatable.View>
 );
 
-const DataItem = ({ item, onPress }) => (
-  <View style={styles.container}>
+const DataItem = pure(({ item, onLinkClick, onClick }) => (
+  <TouchableOpacity onPress={onClick} style={styles.container}>
     <View style={styles.contentContainer}>
       <Text key="title" numberOfLines={2} style={styles.title}>
         {item.title.trim()}
@@ -91,12 +94,12 @@ const DataItem = ({ item, onPress }) => (
       </Text>
     </View>
     {item.url && (
-      <TouchableOpacity style={styles.buttonContainer} onPress={onPress}>
+      <TouchableOpacity style={styles.buttonContainer} onPress={onLinkClick}>
         <Icon name="tab" size={32} />
       </TouchableOpacity>
     )}
-  </View>
-);
+  </TouchableOpacity>
+));
 
 class StoryListItem extends React.Component {
   shouldComponentUpdate(nextProps) {
@@ -111,7 +114,7 @@ class StoryListItem extends React.Component {
     }
   }
 
-  _openLink = () => {
+  openLink = () => {
     const { item } = this.props;
     if (item && item.url && item.url !== '') {
       Linking.openURL(item.url).catch(err =>
@@ -120,10 +123,19 @@ class StoryListItem extends React.Component {
     }
   };
 
+  goToStory = () => {
+    console.log(this.props);
+    this.props.pushScreen(StoryScreen, { id: this.props.id });
+  };
+
   render() {
     const { item } = this.props;
     return item ? (
-      <DataItem item={item} onPress={this._openLink} />
+      <DataItem
+        item={item}
+        onLinkClick={this.openLink}
+        onClick={this.goToStory}
+      />
     ) : (
       <DummyItem />
     );
@@ -139,4 +151,10 @@ const mapStateToProps = (state, props) => {
 export default connect(
   mapStateToProps,
   { fetchItem }
-)(StoryListItem);
+)(props => (
+  <Navigator.Consumer>
+    {({ actions }) => (
+      <StoryListItem {...props} pushScreen={actions.pushScreen} />
+    )}
+  </Navigator.Consumer>
+));

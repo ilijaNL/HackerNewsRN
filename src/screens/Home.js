@@ -1,11 +1,13 @@
 import React from 'react';
 import { TabView, TabBar } from 'react-native-tab-view';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, InteractionManager, Dimensions, View } from 'react-native';
 
 import Ask from './home/Ask';
 import New from './home/New';
 import Show from './home/Show';
 import Top from './home/Top';
+
+import Screen from '../components/Screen';
 
 const styles = StyleSheet.create({
   tabbar: {
@@ -27,9 +29,10 @@ const Tabs = {
   show: () => <Show />
 };
 
-export default class extends React.Component {
+class Home extends React.PureComponent {
   state = {
     index: 0,
+    loadingComponent: true,
     routes: [
       { key: 'top', title: 'Top' },
       { key: 'new', title: 'New' },
@@ -38,11 +41,19 @@ export default class extends React.Component {
     ]
   };
 
+  componentDidMount() {
+    InteractionManager.runAfterInteractions(() => {
+      if (this.state.loadingComponent) {
+        this.setState({ loadingComponent: false });
+      }
+    });
+  }
+
   _renderScene = ({ route }) => {
-    if (Tabs[route.key]) {
+    if (Tabs[route.key] && !this.state.loadingComponent) {
       return Tabs[route.key](); // use factory function (performance)
     }
-    return null;
+    return <View />;
   };
 
   _onIndexChange = index => {
@@ -67,8 +78,22 @@ export default class extends React.Component {
         renderScene={this._renderScene}
         renderTabBar={this._renderTabBar}
         onIndexChange={this._onIndexChange}
+        initialLayout={{
+          width: Dimensions.get('window').width,
+          height: Dimensions.get('window').height
+        }}
         tabBarPosition="bottom"
       />
+    );
+  }
+}
+
+export default class extends React.Component {
+  render() {
+    return (
+      <Screen {...this.props}>
+        <Home />
+      </Screen>
     );
   }
 }

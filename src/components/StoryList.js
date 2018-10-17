@@ -2,7 +2,7 @@ import React from 'react';
 import { FlatList } from 'react-native';
 import StoryListItem from './StoryListItem';
 
-const CHUNK_SIZE = 15;
+const CHUNK_SIZE = 11;
 
 export default class extends React.PureComponent {
   // we slice for performance
