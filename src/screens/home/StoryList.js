@@ -11,12 +11,10 @@ export default class extends React.PureComponent {
     data: this.props.data.slice(0, CHUNK_SIZE)
   };
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevProps.data !== this.props.data) {
-      this.setState(state => ({
-        data: this.props.data.slice(0, state.listSize)
-      }));
-    }
+  static getDerivedStateFromProps(props, state) {
+    return {
+      data: props.data.slice(0, state.listSize)
+    };
   }
 
   _keyExtractor = item => item.toString();

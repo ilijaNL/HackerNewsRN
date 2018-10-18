@@ -9,6 +9,7 @@ import {
 import { connect } from 'react-redux';
 import Header from '../components/Header';
 import Screen from '../components/Screen';
+import CommentList from './story/List';
 
 const styles = StyleSheet.create({
   container: {
@@ -21,13 +22,13 @@ class Story extends React.PureComponent {
     loadingComponent: true
   };
 
-  componentDidMount() {
+  /* componentDidMount() {
     InteractionManager.runAfterInteractions(() => {
       if (this.state.loadingComponent) {
         this.setState({ loadingComponent: false });
       }
     });
-  }
+  } */
 
   _openLink = () => {
     const { item } = this.props;
@@ -63,7 +64,7 @@ class Story extends React.PureComponent {
             backButton
             rightButtons={this._rightButtons}
           />
-          <Text>Story</Text>
+          <CommentList data={item.kids || []} />
         </View>
       </Screen>
     );

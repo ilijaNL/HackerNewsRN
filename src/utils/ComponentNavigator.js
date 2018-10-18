@@ -1,5 +1,7 @@
-import React, { Component, createContext, PureComponent } from 'react';
+import React, { Component, createContext } from 'react';
+import { Animated, BackHandler } from 'react-native';
 import PropTypes from 'prop-types';
+import { debounce } from 'lodash';
 
 const initialState = {
   stack: []
@@ -32,7 +34,30 @@ const isForeground = (idx, arr) => {
   );
 };
 
-class PureComp extends PureComponent {
+const createStackItem = (Component, data = {}, initial = false) => {
+  return {
+    Component,
+    data,
+    transition: initial ? TRANSITION_STATES.IDLE : TRANSITION_STATES.IN,
+    animation: new Animated.Value(initial ? 1 : 0),
+    _id: generateUniqueKey()
+  };
+};
+
+const animateValue = (animatedValue, to, duration) => {
+  return new Promise(resolve => {
+    Animated.timing(animatedValue, {
+      toValue: to,
+      duration: duration,
+      useNativeDriver: true
+    }).start(resolve);
+  });
+};
+
+class PureComp extends Component {
+  shouldComponentUpdate(nextProps) {
+    return this.props.isBackground !== nextProps.isBackground;
+  }
   render() {
     const { Component, ...props } = this.props;
     return <Component {...props} />;
@@ -49,28 +74,29 @@ export default class extends Component {
 
   state = Object.assign({}, initialState, {
     stack: [
-      {
-        Component: this.props.initialComponent,
-        data: this.props.initialData || {},
-        transition: TRANSITION_STATES.IDLE,
-        _id: generateUniqueKey()
-      }
+      createStackItem(this.props.initialComponent, this.props.initialData, true)
     ]
   });
 
-  _push = async (Component, data, transition = 300) => {
-    const stackItem = {
-      _id: generateUniqueKey(), // used internal to replace this item
-      Component,
-      data,
-      transition: TRANSITION_STATES.IN
-    };
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.actions.popScreen);
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener(
+      'hardwareBackPress',
+      this.actions.popScreen
+    );
+  }
+
+  _push = async (Component, data, transition = 210) => {
+    const stackItem = createStackItem(Component, data);
 
     this.setState(state => ({
       stack: [...state.stack, stackItem]
     }));
 
-    await new Promise(resolve => setTimeout(resolve, transition));
+    await animateValue(stackItem.animation, 1, transition);
 
     const i = Object.assign({}, stackItem, {
       transition: TRANSITION_STATES.IDLE
@@ -88,33 +114,50 @@ export default class extends Component {
         return acc;
       }, [])
     }));
+
+    BackHandler.addEventListener('hardwareBackPress', this.actions.popScreen);
   };
 
-  _pop = async (transition = 250) => {
-    if (this.state.stack.length <= 1) {
+  _pop = async (transition = 210) => {
+    if (
+      this.state.stack.length <= 1 ||
+      !this.state.stack
+        .slice(1)
+        .some(w => w.transition === TRANSITION_STATES.IDLE)
+    ) {
       return;
     }
-    this.setState(({ stack }) => {
-      const lastIdx = stack.length - 1;
-      const lastScreen = stack[lastIdx];
-      const newScreen = Object.assign({}, lastScreen, {
-        transition: TRANSITION_STATES.OUT
-      });
-      return {
-        stack: [...stack.slice(0, -1), newScreen]
-      };
+
+    const lastScreen = this.state.stack[this.state.stack.length - 1];
+    console.log({ lastScreen });
+    const newScreen = Object.assign({}, lastScreen, {
+      transition: TRANSITION_STATES.OUT
     });
 
-    await new Promise(resolve => setTimeout(resolve, transition));
-
     this.setState(({ stack }) => ({
-      stack: stack.slice(0, -1)
+      stack: [...stack.slice(0, -1), newScreen]
     }));
+
+    await animateValue(lastScreen.animation, 0, transition);
+
+    this.setState(
+      ({ stack }) => ({
+        stack: stack.filter(s => s._id !== newScreen._id)
+      }),
+      () => {
+        if (this.state.stack.length < 2) {
+          BackHandler.removeEventListener(
+            'hardwareBackPress',
+            this.actions.popScreen
+          );
+        }
+      }
+    );
   };
 
   actions = {
-    pushScreen: this._push,
-    popScreen: this._pop
+    pushScreen: debounce(this._push, 300, { leading: true, trailing: false }),
+    popScreen: debounce(this._pop, 300, { leading: true, trailing: false })
   };
 
   render() {

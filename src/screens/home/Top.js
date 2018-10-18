@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { getTopStories } from '../../redux/stories';
-import StoryList from '../../components/StoryList';
+import StoryList from './StoryList';
 
 const List = connect(state => ({
   data: state.stories.top,

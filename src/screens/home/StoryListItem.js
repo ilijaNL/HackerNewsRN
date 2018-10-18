@@ -13,9 +13,9 @@ import { pure } from 'recompose';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import { fetchItem } from '../redux/items';
-import Navigator from '../utils/ComponentNavigator';
-import StoryScreen from '../screens/Story';
+import { fetchItem } from '../../redux/items';
+import Navigator from '../../utils/ComponentNavigator';
+import StoryScreen from '../Story';
 
 dayjs.extend(relativeTime);
 
