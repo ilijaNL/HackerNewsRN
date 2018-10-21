@@ -1,8 +1,21 @@
 import React from 'react';
-import { FlatList, Text } from 'react-native';
+import { FlatList, View } from 'react-native';
+import _ from 'lodash';
 import Comment from './Comment';
 
-const CHUNK_SIZE = 15;
+const CHUNK_SIZE = 8;
+
+export class DummyList extends React.PureComponent {
+  render() {
+    return (
+      <View style={{ flex: 1 }}>
+        {_.times(Math.min(this.props.items, 4), i => (
+          <Comment key={i} id={-1} lvl={1} />
+        ))}
+      </View>
+    );
+  }
+}
 
 class List extends React.Component {
   // we slice for performance
@@ -31,9 +44,7 @@ class List extends React.Component {
 
     return (
       <FlatList
-        refreshing={false}
         data={data}
-        onRefresh={() => {}}
         renderItem={this._renderItem}
         onEndReached={this._onEndReached}
         keyExtractor={this._keyExtractor}

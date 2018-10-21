@@ -1,15 +1,9 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  InteractionManager,
-  StyleSheet,
-  Linking
-} from 'react-native';
+import { View, InteractionManager, StyleSheet, Linking } from 'react-native';
 import { connect } from 'react-redux';
 import Header from '../components/Header';
 import Screen from '../components/Screen';
-import CommentList from './story/List';
+import CommentList, { DummyList } from './story/List';
 
 const styles = StyleSheet.create({
   container: {
@@ -22,13 +16,13 @@ class Story extends React.PureComponent {
     loadingComponent: true
   };
 
-  /* componentDidMount() {
+  componentDidMount() {
     InteractionManager.runAfterInteractions(() => {
       if (this.state.loadingComponent) {
         this.setState({ loadingComponent: false });
       }
     });
-  } */
+  }
 
   _openLink = () => {
     const { item } = this.props;
@@ -55,6 +49,7 @@ class Story extends React.PureComponent {
 
   render() {
     const { item, ...screenProps } = this.props;
+    const { loadingComponent } = this.state;
     return (
       <Screen {...screenProps}>
         <View style={styles.container}>
@@ -64,7 +59,11 @@ class Story extends React.PureComponent {
             backButton
             rightButtons={this._rightButtons}
           />
-          <CommentList data={item.kids || []} />
+          {!loadingComponent ? (
+            <CommentList data={item.kids || []} />
+          ) : (
+            <DummyList items={(item.kids || []).length} />
+          )}
         </View>
       </Screen>
     );
