@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, InteractionManager, StyleSheet, Linking } from 'react-native';
+import {
+  View,
+  InteractionManager,
+  StyleSheet,
+  Linking,
+  Text
+} from 'react-native';
 import { connect } from 'react-redux';
 import Header from '../components/Header';
 import Screen from '../components/Screen';
@@ -8,6 +14,11 @@ import CommentList, { DummyList } from './story/List';
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  noCommentsContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });
 
@@ -50,6 +61,7 @@ class Story extends React.PureComponent {
   render() {
     const { item, ...screenProps } = this.props;
     const { loadingComponent } = this.state;
+    const kids = item.kids || [];
     return (
       <Screen {...screenProps}>
         <View style={styles.container}>
@@ -59,10 +71,14 @@ class Story extends React.PureComponent {
             backButton
             rightButtons={this._rightButtons}
           />
-          {!loadingComponent ? (
-            <CommentList data={item.kids || []} />
+          {kids.length === 0 ? (
+            <View style={styles.noCommentsContainer}>
+              <Text>No Comments</Text>
+            </View>
+          ) : !loadingComponent ? (
+            <CommentList data={kids} />
           ) : (
-            <DummyList items={(item.kids || []).length} />
+            <DummyList items={kids.length} />
           )}
         </View>
       </Screen>
