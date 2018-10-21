@@ -1,6 +1,6 @@
 import React from 'react';
 import { TabView, TabBar } from 'react-native-tab-view';
-import { StyleSheet, InteractionManager, Dimensions, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import Ask from './home/Ask';
 import New from './home/New';
@@ -32,7 +32,6 @@ const Tabs = {
 class Home extends React.PureComponent {
   state = {
     index: 0,
-    loadingComponent: true,
     routes: [
       { key: 'top', title: 'Top' },
       { key: 'new', title: 'New' },
@@ -41,16 +40,18 @@ class Home extends React.PureComponent {
     ]
   };
 
-  componentDidMount() {
-    InteractionManager.runAfterInteractions(() => {
-      if (this.state.loadingComponent) {
-        this.setState({ loadingComponent: false });
-      }
-    });
-  }
+  _routesRendered = {};
 
   _renderScene = ({ route }) => {
-    if (Tabs[route.key] && !this.state.loadingComponent) {
+    // lazy load route
+    const { index, routes } = this.state;
+    const currRouteIdx = routes.indexOf(route);
+    if (
+      Tabs[route.key] &&
+      (this._routesRendered[route.key] || index === currRouteIdx)
+    ) {
+      // check if we rendered
+      this._routesRendered[route.key] = true;
       return Tabs[route.key](); // use factory function (performance)
     }
     return <View />;
@@ -78,10 +79,6 @@ class Home extends React.PureComponent {
         renderScene={this._renderScene}
         renderTabBar={this._renderTabBar}
         onIndexChange={this._onIndexChange}
-        initialLayout={{
-          width: Dimensions.get('window').width,
-          height: Dimensions.get('window').height
-        }}
         tabBarPosition="bottom"
       />
     );
